@@ -7,6 +7,10 @@ import (
 	"net/http"
 )
 
+// HttpStream streams the given reader to the given writer using the ResponseWriter
+// flush and watch canceling the request.
+// The ResponseWriter must implement http.CloseNotifier and http.Flusher.
+// If the request is canceled, the reader will be closed.
 func HttpStream(res http.ResponseWriter, w io.Writer, r io.ReadCloser) error {
 	// type assert to http.Flusher to be able to stream journald's output
 	f, ok := res.(http.Flusher)
