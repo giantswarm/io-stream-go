@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-// HttpStream stems the given reader to the given ResponseWriter.
+// HttpStream streams the given reader to the given ResponseWriter.
 // The ResponseWriter must implement http.CloseNotifier.
 // If the request is canceled, the reader will be closed.
 func HttpStream(w http.ResponseWriter, r io.ReadCloser) error {
