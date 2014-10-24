@@ -17,7 +17,7 @@ func HttpStream(res http.ResponseWriter, w io.Writer, r io.ReadCloser) error {
 	if !ok {
 		return errgo.Newf("response writer is not a flusher")
 	}
-	wf := &iostream.WriteFlusher{W: w, Flusher: f}
+	wf := &WriteFlusher{W: w, Flusher: f}
 
 	// type assert to http.CloseNotifier to be able to handle disconnection of clients
 	cn, ok := res.(http.CloseNotifier)
@@ -26,7 +26,7 @@ func HttpStream(res http.ResponseWriter, w io.Writer, r io.ReadCloser) error {
 	}
 	closeChan := cn.CloseNotify()
 
-	return iostream.Stream(wf, r, closeChan)
+	return Stream(wf, r, closeChan)
 }
 
 // WriteFlusher is a port of Docker's implementation used in their API.
