@@ -1,10 +1,10 @@
 package iostream
 
 import (
-  "github.com/juju/errgo"
-  
-	"net/http"
+	"github.com/juju/errgo"
+
 	"io"
+	"net/http"
 )
 
 // HttpStream streams the given reader to the given ResponseWriter.
@@ -18,12 +18,12 @@ func HttpStream(w http.ResponseWriter, r io.ReadCloser) error {
 	}
 	closeChan := cn.CloseNotify()
 
-  wf, err := NewWriteFlusher(w)
-  if err != nil {
-    return errgo.Mask(err)
-  }
+	wf, err := NewWriteFlusher(w)
+	if err != nil {
+		return errgo.Mask(err)
+	}
 
-  return Stream(wf, r, closeChan)
+	return Stream(wf, r, closeChan)
 }
 
 // NewWriteFlusher ensures that the given io.Writer w also implements http.Flusher
