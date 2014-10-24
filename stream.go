@@ -6,6 +6,8 @@ import (
 	"github.com/juju/errgo"
 )
 
+// Stream continously reads the data from r and writes them w using io.Copy.
+// The copy operation can by sending any bool to cancel.
 func Stream(w io.Writer, r io.ReadCloser, cancel <-chan bool) error {
 	errChan := make(chan error)
 
