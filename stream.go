@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	MaskAny = errgo.MaskFunc(errgo.Any)
+	maskAny = errgo.MaskFunc(errgo.Any)
 )
 
 // Stream continously reads the data from r and writes them w using io.Copy.
@@ -22,7 +22,7 @@ func Stream(w io.Writer, r io.ReadCloser, cancel <-chan bool) error {
 	go func() {
 		_, err := io.Copy(w, r)
 		select {
-		case errChan <- MaskAny(err):
+		case errChan <- maskAny(err):
 		default:
 		}
 		close(errChan)
@@ -31,9 +31,9 @@ func Stream(w io.Writer, r io.ReadCloser, cancel <-chan bool) error {
 	// Wait for the client to close the connection
 	select {
 	case err := <-errChan:
-		return MaskAny(err)
+		return maskAny(err)
 	case <-cancel:
 		// Client closed the request
-		return MaskAny(r.Close())
+		return maskAny(r.Close())
 	}
 }
