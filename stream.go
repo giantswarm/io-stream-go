@@ -6,6 +6,10 @@ import (
 	"github.com/juju/errgo"
 )
 
+var (
+	maskAny = errgo.MaskFunc(errgo.Any)
+)
+
 // Stream continously reads the data from r and writes them w using io.Copy.
 // The copy operation can by sending any bool to cancel.
 // Any returned error of `io.Copy` is ignored, if the request is already canceled.
@@ -18,7 +22,7 @@ func Stream(w io.Writer, r io.ReadCloser, cancel <-chan bool) error {
 	go func() {
 		_, err := io.Copy(w, r)
 		select {
-		case errChan <- errgo.Mask(err):
+		case errChan <- maskAny(err):
 		default:
 		}
 		close(errChan)
@@ -27,9 +31,9 @@ func Stream(w io.Writer, r io.ReadCloser, cancel <-chan bool) error {
 	// Wait for the client to close the connection
 	select {
 	case err := <-errChan:
-		return errgo.Mask(err)
+		return maskAny(err)
 	case <-cancel:
 		// Client closed the request
-		return errgo.Mask(r.Close())
+		return maskAny(r.Close())
 	}
 }
