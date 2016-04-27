@@ -20,6 +20,13 @@ func Stream(w io.Writer, r io.ReadCloser, cancel <-chan bool) error {
 
 	// Execute the io.Copy asynchronously so we can wait for cancel events
 	go func() {
+		defer func() {
+			// We have seen io.Copy fail with panics (see https://github.com/giantswarm/app-service/issues/748)
+			// Catch and convert to a normal error
+			if err := recover(); err != nil {
+				errChan <- err
+			}
+		}()
 		_, err := io.Copy(w, r)
 		select {
 		case errChan <- maskAny(err):
