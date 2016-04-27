@@ -1,6 +1,7 @@
 package iostream
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/juju/errgo"
@@ -24,7 +25,7 @@ func Stream(w io.Writer, r io.ReadCloser, cancel <-chan bool) error {
 			// We have seen io.Copy fail with panics (see https://github.com/giantswarm/app-service/issues/748)
 			// Catch and convert to a normal error
 			if err := recover(); err != nil {
-				errChan <- err
+				errChan <- fmt.Errorf("%s", err)
 			}
 		}()
 		_, err := io.Copy(w, r)
